@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 
 const app = express();
+const userRoutes = require('./routes/userRoutes');
 
 app.use(cors());
 app.use(express.json()) //to parse json data from requests
@@ -11,6 +12,10 @@ app.use(express.json()) //to parse json data from requests
 app.get('/api',(req,res)=>{
   res.send('API is running');
 });
+
+
+app.use('/api/users',userRoutes);
+
 
 mongoose.connect(process.env.MONGO_URI)
    .then(() => console.log('MongoDB connected'))
