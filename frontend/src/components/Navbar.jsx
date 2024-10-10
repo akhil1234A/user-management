@@ -1,47 +1,44 @@
-import { useSelector, useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../slices/authSlice';
+import { Navbar, Nav, Container } from 'react-bootstrap';
 
-const Navbar = () => {
-  const { user } = useSelector((state) => state.auth);
+const NavigationBar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const user = useSelector((state) => state.auth.user); // Correctly access user
+
+  console.log('User from navigation:', user); // This should not be undefined now
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate('/login');
+    navigate('/'); // Redirect to the login page
   };
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light">
-      <div className="container">
-        <Link className="navbar-brand" to="/">My App</Link>
-        <div className="collapse navbar-collapse">
-          <ul className="navbar-nav ml-auto">
+    <Navbar bg="light" expand="lg">
+      <Container>
+        <Navbar.Brand as={Link} to="/home">MyApp</Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="me-auto">
             {user ? (
               <>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/profile">Profile</Link>
-                </li>
-                <li className="nav-item">
-                  <button className="btn btn-danger" onClick={handleLogout}>Logout</button>
-                </li>
+                <Nav.Link as={Link} to="/home">Home</Nav.Link>
+                <Nav.Link as={Link} to="/profile">Profile</Nav.Link>
+                <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
               </>
             ) : (
               <>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/login">Login</Link>
-                </li>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/register">Register</Link>
-                </li>
+                <Nav.Link as={Link} to="/">Login</Nav.Link>
+                <Nav.Link as={Link} to="/signup">Sign Up</Nav.Link>
               </>
             )}
-          </ul>
-        </div>
-      </div>
-    </nav>
+          </Nav>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
   );
 };
 
-export default Navbar;
+export default NavigationBar;

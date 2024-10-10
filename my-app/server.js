@@ -7,6 +7,7 @@ const app = express();
 const userRoutes = require('./routes/userRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 
+
 app.use(cors());
 app.use(express.json()); // to parse JSON data
 

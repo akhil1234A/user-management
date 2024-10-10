@@ -82,8 +82,47 @@ const uploadProfileImage = async (req, res) => {
   }
 };
 
+const getUserProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select('-password'); // Exclude password from response
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json({ name: user.name, email: user.email, image: user.profileImage });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// In userController.js
+const updateUserProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (req.body.name) user.name = req.body.name;
+    if (req.body.email) user.email = req.body.email;
+
+    // Check if there is an uploaded image
+    if (req.file) {
+      user.profileImage = `/uploads/${req.file.filename}`;
+    }
+
+    await user.save();
+
+    res.json({ message: 'Profile updated successfully', profileImage: user.profileImage });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
 module.exports = {
   registerUser,
   loginUser,
   uploadProfileImage,
+  getUserProfile,
+  updateUserProfile,
 };

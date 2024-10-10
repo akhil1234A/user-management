@@ -1,16 +1,13 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import Login from './components/Login';
-import Register from './components/Register';
-import Profile from './components/Profile';
-import Home from './pages/Home';
-import ProtectedRoute from './components/ProtectedRoute';
+import LoginPage from './pages/User/LoginPage';
+import SignupPage from './pages/User/SignupPage';
+import HomePage from './pages/User/HomePage';
+import UserProfile from './pages/User/UserProfile';
+import Navbar from './components/Navbar'
+import ProtectedRoute from './components/ProtectedRoute'
 
 
-import AdminLogin from './components/admin/adminLogin';
-import AdminDashboard from './components/admin/AdminDashboard';
-import AdminHome from './pages/AdminHome';
-import ProtectedAdminRoute from './components/admin/ProtectedAdminRoute';
+
 
 function App() {
   return (
@@ -18,20 +15,22 @@ function App() {
       <Navbar />
       <Routes>
         {/* User routes*/}
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route
+        <Route path="/" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
+        <Route path="/home" element={<HomePage />} />
+        {/* <Route path="/profile" element={<UserProfile />} /> */}
+
+         <Route
           path="/profile"
           element={
             <ProtectedRoute>
-              <Profile />
+              <UserProfile />
             </ProtectedRoute>
-          }
+          } 
         />
 
           {/* Admin routes */}
-        <Route path="/admin" element={<AdminHome />} />
+        {/* <Route path="/admin" element={<AdminHome />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route
           path="/admin/dashboard"
@@ -40,7 +39,7 @@ function App() {
               <AdminDashboard />
             </ProtectedAdminRoute>
           }
-        />
+        /> */}
 
       </Routes>
     </Router>
