@@ -6,7 +6,7 @@ const { registerUser, loginUser, uploadProfileImage, getUserProfile, updateUserP
 const router = express.Router();
 
 // Register User
-router.post('/signup', registerUser);
+router.post('/signup', upload.single('profileImage'), registerUser);
 
 // Login User
 router.post('/login', loginUser);
@@ -14,8 +14,10 @@ router.post('/login', loginUser);
 // Upload Profile Image
 router.post('/upload', protect, upload.single('profileImage'), uploadProfileImage);
 
-router.get('/profile', protect, getUserProfile); // Add this line to get user profile
-router.put('/profile', protect, upload.single('image'), updateUserProfile); // Update user profile
+// Get User Profile
+router.get('/profile', protect, getUserProfile);
 
+// Update User Profile
+router.put('/profile', protect, upload.single('image'), updateUserProfile);
 
 module.exports = router;

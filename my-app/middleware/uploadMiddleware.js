@@ -4,7 +4,7 @@ const path = require('path');
 // Set storage engine
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/');
+    cb(null, 'uploads/'); // Ensure this directory exists
   },
   filename: (req, file, cb) => {
     cb(null, `${Date.now()}-${file.originalname}`);
@@ -20,7 +20,7 @@ const fileFilter = (req, file, cb) => {
   if (extname && mimetype) {
     return cb(null, true);
   } else {
-    cb('Images only!');
+    return cb(new Error('Images only!')); // Use an Error object for better handling
   }
 };
 

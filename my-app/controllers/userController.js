@@ -5,6 +5,7 @@ const User = require('../models/User');
 // Register User
 const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
+  const profileImage = req.file ? `/uploads/${req.file.filename}` : null; // Check for the uploaded file
 
   try {
     const existingUser = await User.findOne({ email });
@@ -19,6 +20,8 @@ const registerUser = async (req, res) => {
       name,
       email,
       password: hashedPassword,
+      role: 'user', // Default role
+      profileImage // Save the profile image path
     });
 
     await user.save();
@@ -29,12 +32,17 @@ const registerUser = async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
+      role: user.role, // Include role in response
       token,
+      profileImage // Include profile image in response
     });
   } catch (error) {
+    console.error(error); // Log the error for debugging
     res.status(500).json({ message: error.message });
   }
 };
+
+
 
 // Login User
 const loginUser = async (req, res) => {
@@ -58,6 +66,7 @@ const loginUser = async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
+      role: user.role,
       token,
     });
   } catch (error) {
@@ -82,19 +91,21 @@ const uploadProfileImage = async (req, res) => {
   }
 };
 
+// Get User Profile
 const getUserProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password'); // Exclude password from response
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    res.json({ name: user.name, email: user.email, image: user.profileImage });
+    res.json({ name: user.name, email: user.email, profileImage: user.profileImage }); // Changed 'image' to 'profileImage'
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// In userController.js
+
+// Update User Profile
 const updateUserProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
@@ -117,7 +128,6 @@ const updateUserProfile = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
 
 module.exports = {
   registerUser,
