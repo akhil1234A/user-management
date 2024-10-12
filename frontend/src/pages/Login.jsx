@@ -14,27 +14,46 @@ function Login() {
   const handleLogin = (e) => {
     e.preventDefault();
     const credentials = { email, password };
+  
+    // Dispatch loginUser and handle success with unwrap
     dispatch(loginUser(credentials))
       .unwrap()
-      .then(() => {
-        // toast.success('Login successful!');
-        navigate('/home'); 
+      .then((data) => {
+        const { token, role } = data; // Make sure your response contains both token and role
+        localStorage.setItem('token', token); // Store the token
+        localStorage.setItem('role', role); // Optionally store role in local storage
+  
+        // Navigate based on the role
+        if (role === 'admin') {
+          navigate('/admin'); // Redirect to admin page
+        } else {
+          navigate('/home'); // Redirect to user home page
+        }
       })
       .catch((err) => {
-        console.error(err);
+        toast.error(err.message || 'Login failed');
       });
   };
+  
 
   useEffect(() => {
     if (!isAuthenticated && localStorage.getItem('token')) {
       dispatch(loadUserFromToken()); // Load user on refresh if token exists
     }
+
+    // Redirect based on role if authenticated
     if (isAuthenticated) {
-      navigate('/home'); // Redirect to home if authenticated
+      const storedRole = localStorage.getItem('role');
+      if (storedRole === 'admin') {
+        navigate('/admin');
+      } else {
+        navigate('/home');
+      }
     }
+
     if (error) {
-      // toast.error('Login failed, please check your credentials');
-      dispatch(clearError());
+      toast.error(error); // Display error message
+      dispatch(clearError()); // Clear the error after displaying it
     }
   }, [isAuthenticated, error, navigate, dispatch]);
 
@@ -88,8 +107,3 @@ function Login() {
 }
 
 export default Login;
-
-
-
-    
-

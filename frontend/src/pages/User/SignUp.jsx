@@ -33,14 +33,14 @@ const SignUp = () => {
 
     try {
       await dispatch(registerUser(formData)).unwrap(); // Ensure you handle the promise properly
-      // toast.success('Registration successful!');
+      toast.success('Registration successful!');
       navigate('/home'); // Redirect to home page after registration
     } catch (err) {
       // Display a more specific error message based on server response
       if (err.response && err.response.data && err.response.data.message) {
-        // toast.error(err.response.data.message);
+        toast.error(err.response.data.message);
       } else {
-        // toast.error('Registration failed, please try again');
+        toast.error('Registration failed, please try again');
       }
       console.error(err);
     }

@@ -10,7 +10,7 @@ const Home = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   
-  const { profile, loading } = useSelector((state) => state.user);
+  const { profile, loading, error} = useSelector((state) => state.user);
   const { isAuthenticated } = useSelector((state) => state.auth); 
   
   const [isModalOpen, setModalOpen] = useState(false); 
@@ -21,10 +21,10 @@ const Home = () => {
       dispatch(loadUserProfile())
         .unwrap()
         .then(() => {
-          // toast.success('User data loaded successfully');
+          toast.success('User data loaded successfully');
         })
         .catch((error) => {
-          // toast.error('Failed to load user data. Please log in again.');
+          toast.error('Failed to load user data. Please log in again.');
           console.error(error);
         });
     }
@@ -34,7 +34,8 @@ const Home = () => {
   const handleLogout = () => {
     dispatch(logout());
     localStorage.removeItem('token');
-    // toast.success('Logged out successfully.');
+    localStorage.removeItem('role');
+    toast.success('Logged out successfully.');
     navigate('/'); 
   };
 
@@ -48,10 +49,10 @@ const Home = () => {
     try {
       await dispatch(updateUserProfile(updatedData)).unwrap();
       await dispatch(loadUserProfile()).unwrap(); // Reload the user profile after updating
-      // toast.success('Profile updated successfully'); // Notify success
+      toast.success('Profile updated successfully'); // Notify success
       toggleModal(); // Close the modal
     } catch (error) {
-      // toast.error('Failed to update profile');
+      toast.error('Failed to update profile');
       console.error(error);
     }
   };

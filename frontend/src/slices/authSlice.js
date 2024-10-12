@@ -6,7 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 const initialState = {
   isAuthenticated: false,
   user: null,
-  role: null, // Tracks user role (admin or user)
+  role: null,
   error: null,
   loading: false,
 };
@@ -31,7 +31,7 @@ export const registerUser = createAsyncThunk(
     try {
       const response = await axios.post('http://localhost:3000/api/users/signup', userData, {
         headers: {
-          'Content-Type': 'multipart/form-data', // Ensure the correct content type for file uploads
+          'Content-Type': 'multipart/form-data', 
         },
       });
       return response.data; // Expecting { token, user, role }
@@ -51,10 +51,10 @@ export const loadUserFromToken = createAsyncThunk(
     }
 
     try {
-      const response = await axios.get('http://localhost:3000/api/users/me', {
+      const response = await axios.get('http://localhost:3000/api/users/profile', {
         headers: { Authorization: `Bearer ${token}` },
       });
-      return response.data; // Expecting user data
+      return response.data; // Expecting user data with role
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to load user');
     }
@@ -70,7 +70,8 @@ const authSlice = createSlice({
       state.user = null;
       state.role = null;
       localStorage.removeItem('token');
-      toast.info('Logged out successfully');
+      localStorage.removeItem('role');
+      // toast.info('Logged out successfully');
     },
     clearError(state) {
       state.error = null;
@@ -78,7 +79,7 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Handle login
+      // Login flow
       .addCase(loginUser.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -88,15 +89,17 @@ const authSlice = createSlice({
         state.user = action.payload.user;
         state.role = action.payload.role;
         state.loading = false;
-        toast.success('Logged in successfully');
+        // toast.success('Logged in successfully');
         localStorage.setItem('token', action.payload.token);
+        localStorage.setItem('role', action.payload.role);
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || action.error.message;
-        toast.error(state.error);
+        // toast.error(state.error);
       })
-      // Handle registration
+      
+      // Register flow
       .addCase(registerUser.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -106,15 +109,17 @@ const authSlice = createSlice({
         state.user = action.payload.user;
         state.role = action.payload.role;
         state.loading = false;
-        toast.success('Registered successfully');
+        // toast.success('Registered successfully');
         localStorage.setItem('token', action.payload.token);
+        localStorage.setItem('role', action.payload.role);
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || action.error.message;
-        toast.error(state.error);
+        // toast.error(state.error);
       })
-      // Handle loading user from token
+
+      // Load user from token
       .addCase(loadUserFromToken.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -122,13 +127,17 @@ const authSlice = createSlice({
       .addCase(loadUserFromToken.fulfilled, (state, action) => {
         state.isAuthenticated = true;
         state.user = action.payload; // Assuming this contains the user data
+        state.role = action.payload.role; // Ensure role is set from the token payload
         state.loading = false;
-        toast.success('User loaded from token');
+        localStorage.setItem('role', action.payload.role); // Store role again
+        // toast.success('User loaded from token');
       })
       .addCase(loadUserFromToken.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || action.error.message;
-        toast.error(state.error);
+        localStorage.removeItem('token');
+        localStorage.removeItem('role');
+        // toast.error(state.error);
       });
   },
 });

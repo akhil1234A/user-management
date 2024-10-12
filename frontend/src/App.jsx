@@ -2,53 +2,55 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useDispatch } from 'react-redux';
-import { loadUserProfile } from './slices/userSlice';
 import { useEffect } from 'react';
-
 import LoginPage from './pages/Login';
 import SignupPage from './pages/User/SignUp';
 import HomePage from './pages/User/HomePage';
-import { Navigate } from 'react-router-dom';
-
-
-const ProtectedRoute = ({ element }) => {
-  const token = localStorage.getItem('token'); // Replace 'token' with your token key
-  return token ? element : <Navigate to="/" />; // Redirect to login if not authenticated
-};
-
-
-
+import AdminPage from './pages/Admin/AdminPage';
+import ProtectedRoute from './components/ProtectedRoute';
+import { loadUserFromToken } from './slices/authSlice'; // Import for token loading
+import { loadUserProfile } from './slices/userSlice';
 function App() {
   const dispatch = useDispatch();
 
+  // Load user profile on first render (if token exists)
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      dispatch(loadUserProfile()); // Load user profile if token exists
+        dispatch(loadUserFromToken());
+        dispatch(loadUserProfile()).catch((error) => {
+            console.error("Failed to load user profile:", error);
+            localStorage.removeItem('token');
+        });
     }
-  }, [dispatch]);
+}, [dispatch]);
+
+
   return (
     <Router>
-      
       <Routes>
-        {/* User routes*/}
-          <Route path="/" element={<LoginPage />} /> 
-          <Route path="/signup" element={<SignupPage />} /> 
-          <Route path="/home" element={<ProtectedRoute element={<HomePage />} />} />
-
+        <Route path="/" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
+        <Route 
+          path="/home" 
+          element={<ProtectedRoute element={<HomePage />} requiredRole="user" />} 
+        />
+        <Route 
+          path="/admin" 
+          element={<ProtectedRoute element={<AdminPage />} requiredRole="admin" />} 
+        />
       </Routes>
 
       <ToastContainer 
-        position="top-right"  // Set the position of the toast
-        autoClose={3000}      // Set auto close after 3 seconds
-        hideProgressBar={false} // Option to show/hide progress bar
-        newestOnTop={false}   // If you want the newest toast on top
-        closeOnClick          // Close on clicking the toast
-        pauseOnHover          // Pause the timer when hovering over the toast
-        draggable             // Allow drag-to-close feature
+        position="top-right"  
+        autoClose={3000}      
+        hideProgressBar={false} 
+        newestOnTop={false}   
+        closeOnClick          
+        pauseOnHover          
+        draggable             
       />
     </Router>
-
   );
 }
 

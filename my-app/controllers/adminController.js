@@ -48,6 +48,7 @@ const updateUserRole = async (req, res) => {
 // Add a new user (Admin only)
 const addUser = async (req, res) => {
   const { name, email, password, role } = req.body; // Include role if necessary
+  const profileImage = req.file ? `/uploads/${req.file.filename}` : null; // Check for uploaded file
 
   try {
     const existingUser = await User.findOne({ email });
@@ -63,6 +64,7 @@ const addUser = async (req, res) => {
       email,
       password: hashedPassword,
       role: role || 'user', // Default to 'user' if no role provided
+      profileImage, // Save the profile image path
     });
 
     await newUser.save();
@@ -72,9 +74,12 @@ const addUser = async (req, res) => {
   }
 };
 
+
+// Update user details by ID (Admin only)
 // Update user details by ID (Admin only)
 const updateUserDetails = async (req, res) => {
   const { name, email } = req.body;
+  let profileImage;
 
   try {
     const user = await User.findById(req.params.id);
@@ -87,13 +92,28 @@ const updateUserDetails = async (req, res) => {
     if (name) user.name = name;
     if (email) user.email = email;
 
+    // Check if there is an uploaded image
+    if (req.file) {
+      profileImage = `/uploads/${req.file.filename}`;
+      user.profileImage = profileImage; // Update the profile image path
+    }
+
     await user.save();
 
-    res.json({ message: 'User details updated successfully', user });
+    res.json({
+      message: 'User details updated successfully',
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        profileImage: user.profileImage, // Include the updated profile image
+      },
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
 
 module.exports = {
   getAllUsers,

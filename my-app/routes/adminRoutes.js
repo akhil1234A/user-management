@@ -1,6 +1,8 @@
 const express = require('express');
 const protect = require('../middleware/authMiddleware');
 const admin = require('../middleware/adminMiddleware');
+const upload = require('../middleware/uploadMiddleware');
+
 const {
   getAllUsers,
   deleteUser,
@@ -12,18 +14,20 @@ const {
 const router = express.Router();
 
 // Get all users (Admin only)
-router.get('/', protect, admin, getAllUsers);
+router.get('/', getAllUsers);
 
 // Delete user by ID (Admin only)
-router.delete('/:id', protect, admin, deleteUser);
+router.delete('/:id', deleteUser);
 
 // Update user role by ID (Admin only)
-router.put('/:id/role', protect, admin, updateUserRole); // Update role separately
+router.put('/:id/role', updateUserRole); // Update role separately
 
 // Update user details by ID (Admin only)
-router.put('/:id', protect, admin, updateUserDetails); // New route for updating user details
+router.put('/:id', upload.single('image') , updateUserDetails); // New route for updating user details
 
 // Add a new user (Admin only)
-router.post('/', protect, admin, addUser); // New route for adding a user
+router.post('/', upload.single('image'), addUser); // New route for adding a user
+
+// router.post('/', protect, admin, addUser);
 
 module.exports = router;

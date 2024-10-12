@@ -52,11 +52,11 @@ const userSlice = createSlice({
   reducers: {
     clearProfile(state) {
       state.profile = null;
-      toast.info('Profile cleared');
+      // toast.info('Profile cleared');
     },
     clearError(state) {
       state.error = null;
-      toast.dismiss(); // Dismiss existing error messages
+      // toast.dismiss(); // Dismiss existing error messages
     },
   },
   extraReducers: (builder) => {
@@ -73,7 +73,7 @@ const userSlice = createSlice({
       .addCase(loadUserProfile.rejected, (state, action) => {
         state.loading = false; // Stop loading
         state.error = action.payload; // Set error message
-        toast.error(action.payload); // Show error toast
+        // toast.error(action.payload); // Show error toast
       })
       // Handle updating user profile
       .addCase(updateUserProfile.pending, (state) => {
@@ -83,12 +83,12 @@ const userSlice = createSlice({
       .addCase(updateUserProfile.fulfilled, (state, action) => {
         state.profile = action.payload; // Update the profile data
         state.loading = false; // Stop loading
-        toast.success('Profile updated successfully'); // Notify success
+        // toast.success('Profile updated successfully'); // Notify success
       })
       .addCase(updateUserProfile.rejected, (state, action) => {
         state.loading = false; // Stop loading
         state.error = action.payload; // Set error message
-        toast.error(action.payload); // Show error toast
+        // toast.error(action.payload); // Show error toast
       });
   },
 });

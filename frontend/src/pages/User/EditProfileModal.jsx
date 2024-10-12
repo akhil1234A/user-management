@@ -37,14 +37,14 @@ const EditProfileModal = ({ isOpen, onClose }) => {
 
     try {
       await dispatch(updateUserProfile(formData)).unwrap();
-      // toast.success('Profile updated successfully!');
+      toast.success('Profile updated successfully!');
       
       // Refresh profile data after update
       await dispatch(loadUserProfile()).unwrap(); // Dispatch loadUserProfile to refresh data
       onClose(); // Close the modal after a successful update
     } catch (err) {
       const errorMessage = err.response?.data?.message || 'Failed to update profile, please try again.';
-      // toast.error(errorMessage);
+      toast.error(errorMessage);
       console.error(err); // Log error for debugging
     } finally {
       setLoading(false);
