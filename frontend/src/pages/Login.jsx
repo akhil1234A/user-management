@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { loginUser, clearError } from '../slices/authSlice'; // Import clearError action
+import { loginUser, clearError, loadUserFromToken } from '../slices/authSlice'; 
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
@@ -13,29 +13,27 @@ function Login() {
 
   const handleLogin = (e) => {
     e.preventDefault();
-
-    const credentials = { email, password }; // Create credentials object
-    console.log('Logging in with:', credentials); // Debugging log
-
+    const credentials = { email, password };
     dispatch(loginUser(credentials))
       .unwrap()
       .then(() => {
-        toast.success('Login successful!');
-        navigate('/home'); // Redirect after successful login
+        // toast.success('Login successful!');
+        navigate('/home'); 
       })
       .catch((err) => {
         console.error(err);
       });
   };
 
-  // Effect to handle redirection if already authenticated
   useEffect(() => {
+    if (!isAuthenticated && localStorage.getItem('token')) {
+      dispatch(loadUserFromToken()); // Load user on refresh if token exists
+    }
     if (isAuthenticated) {
       navigate('/home'); // Redirect to home if authenticated
     }
     if (error) {
-      toast.error('Login failed, please check your credentials');
-      // Optionally clear the error after showing the toast
+      // toast.error('Login failed, please check your credentials');
       dispatch(clearError());
     }
   }, [isAuthenticated, error, navigate, dispatch]);
@@ -90,3 +88,8 @@ function Login() {
 }
 
 export default Login;
+
+
+
+    
+

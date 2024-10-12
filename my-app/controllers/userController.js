@@ -125,6 +125,7 @@ const updateUserProfile = async (req, res) => {
 
     res.json({ message: 'Profile updated successfully', profileImage: user.profileImage });
   } catch (error) {
+    console.error(error); // Log the error
     res.status(500).json({ message: error.message });
   }
 };

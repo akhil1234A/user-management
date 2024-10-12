@@ -1,4 +1,3 @@
-// src/redux/slices/userSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -22,23 +21,23 @@ export const loadUserProfile = createAsyncThunk(
   }
 );
 
-// Async thunk for updating the user profile
+// Async thunk to update the user profile
 export const updateUserProfile = createAsyncThunk(
   'user/updateUserProfile',
-  async (userData, { rejectWithValue }) => {
+  async (updatedData, { rejectWithValue }) => {
     try {
-      const response = await axios.put(
-        'http://localhost:3000/api/users/profile',
-        userData,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`, // Include token for authentication
-          },
-        }
-      );
-      return response.data; // Expecting updated profile data
+      const token = localStorage.getItem('token');
+      if (!token) throw new Error('No token found');
+
+      const response = await axios.put('http://localhost:3000/api/users/profile', updatedData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data', // Ensure correct content type for file uploads
+        },
+      });
+      return response.data; // Expecting updated user profile data
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Profile update failed');
+      return rejectWithValue(error.response?.data?.message || 'Failed to update profile');
     }
   }
 );
@@ -51,17 +50,9 @@ const userSlice = createSlice({
     loading: false,
   },
   reducers: {
-    setProfile(state, action) {
-      state.profile = action.payload;
-      toast.success('Profile updated successfully!');
-    },
     clearProfile(state) {
       state.profile = null;
       toast.info('Profile cleared');
-    },
-    setError(state, action) {
-      state.error = action.payload;
-      toast.error(`Error: ${action.payload}`);
     },
     clearError(state) {
       state.error = null;
@@ -90,9 +81,9 @@ const userSlice = createSlice({
         state.error = null; // Clear any previous errors
       })
       .addCase(updateUserProfile.fulfilled, (state, action) => {
-        state.profile = action.payload; // Set the new profile data
+        state.profile = action.payload; // Update the profile data
         state.loading = false; // Stop loading
-        toast.success('Profile updated successfully!');
+        toast.success('Profile updated successfully'); // Notify success
       })
       .addCase(updateUserProfile.rejected, (state, action) => {
         state.loading = false; // Stop loading
@@ -102,6 +93,7 @@ const userSlice = createSlice({
   },
 });
 
-// Export actions and reducer
-export const { setProfile, clearProfile, setError, clearError } = userSlice.actions;
+// Export actions for clearing profile and errors
+export const { clearProfile, clearError } = userSlice.actions;
+// Export the user slice reducer
 export default userSlice.reducer;

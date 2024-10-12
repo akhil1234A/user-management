@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateUserProfile } from '../../slices/userSlice'; // Ensure this action exists
+import { updateUserProfile, loadUserProfile } from '../../slices/userSlice'; // Import loadUserProfile
 import { toast } from 'react-toastify';
 
 const EditProfileModal = ({ isOpen, onClose }) => {
   const dispatch = useDispatch();
-  
-  // Fetch user profile from state.user.profile (corrected)
   const userProfile = useSelector((state) => state.user.profile); 
 
   // Form states for input fields
@@ -14,44 +12,45 @@ const EditProfileModal = ({ isOpen, onClose }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [profileImage, setProfileImage] = useState(null);
-  const [loading, setLoading] = useState(false); // Loading state
+  const [loading, setLoading] = useState(false);
 
   // Pre-fill form fields with existing user profile data
   useEffect(() => {
     if (userProfile) {
       setName(userProfile.name || '');
       setEmail(userProfile.email || '');
+      setProfileImage(null); // Reset the image preview when modal opens
     }
-  }, [userProfile]);
+  }, [userProfile, isOpen]);
 
   // Handle profile update submission
   const handleUpdate = async (e) => {
     e.preventDefault();
-    setLoading(true); // Set loading to true while updating profile
+    setLoading(true); 
 
-    // Create form data to send (required for handling files)
+    // Create form data to send
     const formData = new FormData();
     formData.append('name', name);
     formData.append('email', email);
-    if (password) formData.append('password', password); // Password update is optional
-    if (profileImage) formData.append('profileImage', profileImage);
+    if (password) formData.append('password', password); // Password is optional
+    if (profileImage) formData.append('image', profileImage);
 
     try {
-      // Dispatch update action and wait for response
       await dispatch(updateUserProfile(formData)).unwrap();
-      toast.success('Profile updated successfully!');
+      // toast.success('Profile updated successfully!');
+      
+      // Refresh profile data after update
+      await dispatch(loadUserProfile()).unwrap(); // Dispatch loadUserProfile to refresh data
       onClose(); // Close the modal after a successful update
     } catch (err) {
-      // Show specific error message if update fails
       const errorMessage = err.response?.data?.message || 'Failed to update profile, please try again.';
-      toast.error(errorMessage);
-      console.error(err);
+      // toast.error(errorMessage);
+      console.error(err); // Log error for debugging
     } finally {
-      setLoading(false); // Reset loading state
+      setLoading(false);
     }
   };
 
-  // Close modal if not open
   if (!isOpen) return null;
 
   return (

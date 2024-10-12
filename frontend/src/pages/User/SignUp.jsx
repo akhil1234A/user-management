@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { registerUser, clearError } from '../../slices/authSlice'; // Import clearError action
 import { Link, useNavigate } from 'react-router-dom';
@@ -33,21 +33,21 @@ const SignUp = () => {
 
     try {
       await dispatch(registerUser(formData)).unwrap(); // Ensure you handle the promise properly
-      toast.success('Registration successful!');
+      // toast.success('Registration successful!');
       navigate('/home'); // Redirect to home page after registration
     } catch (err) {
       // Display a more specific error message based on server response
       if (err.response && err.response.data && err.response.data.message) {
-        toast.error(err.response.data.message);
+        // toast.error(err.response.data.message);
       } else {
-        toast.error('Registration failed, please try again');
+        // toast.error('Registration failed, please try again');
       }
       console.error(err);
     }
   };
 
   // Effect to clear error messages if they exist
-  React.useEffect(() => {
+  useEffect(() => {
     if (error) {
       toast.error(error);
       dispatch(clearError()); // Clear the error after showing the toast

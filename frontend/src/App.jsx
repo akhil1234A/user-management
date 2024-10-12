@@ -1,11 +1,15 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useDispatch } from 'react-redux';
+import { loadUserProfile } from './slices/userSlice';
+import { useEffect } from 'react';
 
 import LoginPage from './pages/Login';
 import SignupPage from './pages/User/SignUp';
 import HomePage from './pages/User/HomePage';
 import { Navigate } from 'react-router-dom';
+
 
 const ProtectedRoute = ({ element }) => {
   const token = localStorage.getItem('token'); // Replace 'token' with your token key
@@ -13,7 +17,16 @@ const ProtectedRoute = ({ element }) => {
 };
 
 
+
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      dispatch(loadUserProfile()); // Load user profile if token exists
+    }
+  }, [dispatch]);
   return (
     <Router>
       
