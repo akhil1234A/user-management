@@ -7,6 +7,7 @@ import LoginPage from './pages/Login';
 import SignupPage from './pages/User/SignUp';
 import HomePage from './pages/User/HomePage';
 import AdminPage from './pages/Admin/AdminPage';
+import ProfilePage from './pages/User/ProfilePage';
 import ProtectedRoute from './components/ProtectedRoute';
 import { loadUserFromToken } from './slices/authSlice'; // Import for token loading
 import { loadUserProfile } from './slices/userSlice';
@@ -34,6 +35,10 @@ function App() {
         <Route 
           path="/home" 
           element={<ProtectedRoute element={<HomePage />} requiredRole="user" />} 
+        />
+        <Route 
+          path="/profile" 
+          element={<ProtectedRoute element={<ProfilePage />} requiredRole="user" />} 
         />
         <Route 
           path="/admin" 

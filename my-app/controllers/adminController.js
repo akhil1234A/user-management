@@ -78,7 +78,7 @@ const addUser = async (req, res) => {
 // Update user details by ID (Admin only)
 // Update user details by ID (Admin only)
 const updateUserDetails = async (req, res) => {
-  const { name, email } = req.body;
+  const { name, email} = req.body;
   let profileImage;
 
   try {
@@ -91,6 +91,7 @@ const updateUserDetails = async (req, res) => {
     // Update fields if provided in the request
     if (name) user.name = name;
     if (email) user.email = email;
+   
 
     // Check if there is an uploaded image
     if (req.file) {
