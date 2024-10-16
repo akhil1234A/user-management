@@ -9,28 +9,30 @@ import HomePage from './pages/User/HomePage';
 import AdminPage from './pages/Admin/AdminPage';
 import ProfilePage from './pages/User/ProfilePage';
 import ProtectedRoute from './components/ProtectedRoute';
+
 import { loadUserFromToken } from './slices/authSlice'; // Import for token loading
 import { loadUserProfile } from './slices/userSlice';
 function App() {
-  const dispatch = useDispatch();
+//   const dispatch = useDispatch();
 
-  // Load user profile on first render (if token exists)
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-        dispatch(loadUserFromToken());
-        dispatch(loadUserProfile()).catch((error) => {
-            console.error("Failed to load user profile:", error);
-            localStorage.removeItem('token');
-        });
-    }
-}, [dispatch]);
+//   // Load user profile on first render (if token exists)
+//   useEffect(() => {
+//     const token = localStorage.getItem('token');
+//     if (token) {
+//         dispatch(loadUserFromToken());
+//         dispatch(loadUserProfile()).catch((error) => {
+//             console.error("Failed to load user profile:", error);
+//             localStorage.removeItem('token');
+//         });
+//     }
+// }, [dispatch]);
 
 
   return (
     <Router>
       <Routes>
         <Route path="/" element={<LoginPage />} />
+        
         <Route path="/signup" element={<SignupPage />} />
         <Route 
           path="/home" 

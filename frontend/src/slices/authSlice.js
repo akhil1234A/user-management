@@ -127,6 +127,7 @@ const authSlice = createSlice({
       .addCase(loadUserFromToken.fulfilled, (state, action) => {
         state.isAuthenticated = true;
         state.user = action.payload; // Assuming this contains the user data
+        console.log(state.user)
         state.role = action.payload.role; // Ensure role is set from the token payload
         state.loading = false;
         localStorage.setItem('role', action.payload.role); // Store role again
