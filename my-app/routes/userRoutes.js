@@ -12,7 +12,7 @@ router.post('/signup', upload.single('profileImage'), registerUser);
 router.post('/login', loginUser);
 
 // Upload Profile Image
-router.post('/upload', protect, upload.single('profileImage'), uploadProfileImage);
+//router.post('/upload', protect, upload.single('profileImage'), uploadProfileImage);
 
 // Get User Profile
 router.get('/profile', protect, getUserProfile);

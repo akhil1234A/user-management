@@ -77,21 +77,21 @@ const loginUser = async (req, res) => {
 
 
 // Upload Profile Image
-const uploadProfileImage = async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id);
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
+// const uploadProfileImage = async (req, res) => {
+//   try {
+//     const user = await User.findById(req.user.id);
+//     if (!user) {
+//       return res.status(404).json({ message: 'User not found' });
+//     }
 
-    user.profileImage = `/uploads/${req.file.filename}`;
-    await user.save();
+//     user.profileImage = req.file.path;;
+//     await user.save();
 
-    res.json({ message: 'Profile image uploaded', profileImage: user.profileImage });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
+//     res.json({ message: 'Profile image uploaded', profileImage: user.profileImage });
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };
 
 // Get User Profile
 const getUserProfile = async (req, res) => {
@@ -128,7 +128,7 @@ const updateUserProfile = async (req, res) => {
 
     // Check if there is an uploaded image
     if (req.file) {
-      user.profileImage = `/uploads/${req.file.filename}`;
+      user.profileImage = req.file.path;
     }
 
     await user.save();
@@ -143,7 +143,6 @@ const updateUserProfile = async (req, res) => {
 module.exports = {
   registerUser,
   loginUser,
-  uploadProfileImage,
   getUserProfile,
   updateUserProfile,
 };

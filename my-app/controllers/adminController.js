@@ -48,7 +48,7 @@ const updateUserRole = async (req, res) => {
 // Add a new user (Admin only)
 const addUser = async (req, res) => {
   const { name, email, password, role } = req.body; // Include role if necessary
-  const profileImage = req.file ? `/uploads/${req.file.filename}` : null; // Check for uploaded file
+  const profileImage = req.file ? req.file.path: null; // Check for uploaded file
 
   try {
     const existingUser = await User.findOne({ email });
@@ -95,7 +95,7 @@ const updateUserDetails = async (req, res) => {
 
     // Check if there is an uploaded image
     if (req.file) {
-      profileImage = `/uploads/${req.file.filename}`;
+      profileImage = req.file.path;
       user.profileImage = profileImage; // Update the profile image path
     }
 
